@@ -8,6 +8,8 @@ import { CoreService } from './esi/core/core.service';
 import { HttpModule } from '@nestjs/common';
 import { join } from 'path';
 import { ServeStaticModule } from '@nestjs/serve-static';
+import { UniverseService } from './esi/universe/universe.service';
+import { EsiConfigService } from './esi/esiconfig.service';
 
 
 @Module({
@@ -18,6 +20,6 @@ import { ServeStaticModule } from '@nestjs/serve-static';
     })
   ],
   controllers: [AppController, OreTableController],
-  providers: [AppService, OreTableService, MarketsService, CoreService],
+  providers: [AppService, OreTableService, MarketsService, CoreService, UniverseService, EsiConfigService],
 })
 export class AppModule {}

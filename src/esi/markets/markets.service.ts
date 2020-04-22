@@ -1,29 +1,31 @@
 import { Injectable } from '@nestjs/common';
-import { ESIConfig } from '../esiconfig';
+import { EsiConfigService } from '../esiconfig.service';
 import { HttpService } from '@nestjs/common';
 
 @Injectable()
 export class MarketsService {
 
     private marketPrices = {
-        data: <Array<marketPrices>>[],
+        data: <Array<MarketPrices>>[],
         cacheDate: Date.now()
     }
 
-    constructor(private esiConfig: ESIConfig, private http:HttpService){
-     
-        this.esiConfig.setVersion('v1');
+    constructor(private esiConfig: EsiConfigService, private http:HttpService){
+       
     }
 
-    listMarketPrices():Promise<Array<marketPrices>>{
-        const apiPath = '/markets/prices';
+    listMarketPrices():Promise<Array<MarketPrices>>{
 
         if(this.marketPrices.cacheDate > Date.now()){
             return new Promise((resolve, reject) =>{
                 resolve(this.marketPrices.data);
             })
         }
-        
+
+        this.esiConfig.setVersion('v1');
+
+        const apiPath = '/markets/prices';
+
         var endpoint = this.esiConfig.buildUrl(apiPath);
 
         return this.http.get(endpoint).toPromise().then((response) =>{

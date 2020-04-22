@@ -1,4 +1,7 @@
-export class ESIConfig  {
+import { Injectable } from '@nestjs/common';
+
+@Injectable()
+export class EsiConfigService  {
     private readonly baseUrl = "https://esi.evetech.net";
     private version = "/latest";
     private datasource = 'datasource=tranquility';
