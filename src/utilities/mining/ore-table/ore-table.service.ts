@@ -52,7 +52,7 @@ export class OreTableService {
     getMineralList():Promise<Array<MineralData>>{
         if(this.mineralList.length > 0){
             return new Promise((resolve, reject) =>{
-                resolve(this.roidList);
+                resolve(this.mineralList);
             });
         }
         

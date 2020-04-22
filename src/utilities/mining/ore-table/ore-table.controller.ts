@@ -1,7 +1,7 @@
 import { Controller, Get } from '@nestjs/common';
 import { OreTableService, RoidData } from './ore-table.service';
 
-@Controller('ore-table')
+@Controller('/api/ore-table')
 export class OreTableController {
 
     constructor(
