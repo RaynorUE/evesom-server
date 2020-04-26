@@ -5,7 +5,9 @@ import { join } from 'path';
 import * as helmet from 'helmet';
 
 async function bootstrap() {
-  var dotEnvPath = join(__dirname, '..', 'environment', '.env')
+  var dotEnvPath = join(__dirname, '..', '..', 'environment', '.env')
+  console.log('environment path: ' + dotEnvPath);
+
   //load up dotenv
   var dotenvResult = dotenv.config({
     path: dotEnvPath

@@ -11,12 +11,14 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { UniverseService } from './esi/universe/universe.service';
 import { EsiConfigService } from './esi/esiconfig.service';
 
+const www = join(__dirname, '..', '..', 'client');
+console.log('www path: ' + www);
 
 @Module({
   imports: [
     HttpModule,
     ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'client')
+      rootPath: www
     })
   ],
   controllers: [AppController, OreTableController],
