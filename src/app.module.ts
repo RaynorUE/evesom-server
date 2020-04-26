@@ -16,7 +16,7 @@ import { EsiConfigService } from './esi/esiconfig.service';
   imports: [
     HttpModule,
     ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', '..', 'client')
+      rootPath: join(__dirname, '..', 'client')
     })
   ],
   controllers: [AppController, OreTableController],
