@@ -7,7 +7,7 @@ export class OreTableService {
 
     table = {
         config: {
-            cacheDate: Date.now()
+            cacheDate: 0
         },
         headers: <Array<TableHeader>>[],
         rows: []
@@ -33,6 +33,10 @@ export class OreTableService {
 
         return Promise.all([this.getRoidList(), this.getMineralList(), this.market.listMarketPrices()]).then((results) => {
             
+            this.table.headers = [];
+            this.table.rows = [];
+            
+
             let marketPrices = results[2];
             //add market prices into lists
             marketPrices.forEach((entry) => {
@@ -88,6 +92,7 @@ export class OreTableService {
                 this.table.rows.push(row);
             })
 
+            this.table.config.cacheDate = Date.now() + (1000 * 60 * 60 * 24);
 
             return this.table;
         })
