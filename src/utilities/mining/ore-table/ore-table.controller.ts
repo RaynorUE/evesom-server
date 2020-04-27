@@ -8,6 +8,12 @@ export class OreTableController {
         private oreTable:OreTableService
     ){}
 
+    @Get()
+    getOreTable():Promise<object>{
+        
+        return this.oreTable.getTable();
+    }
+
     @Get('/testing')
     testing():Promise<Array<RoidData>>{
         return this.oreTable.getMineralList();

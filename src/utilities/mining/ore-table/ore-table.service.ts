@@ -1,28 +1,102 @@
 import { Injectable } from '@nestjs/common';
-import { UniverseService } from '../../../esi/universe/universe.service'
+import { UniverseService } from '../../../esi/universe/universe.service';
+import { MarketsService } from '../../../esi/markets/markets.service';
 
 @Injectable()
 export class OreTableService {
 
     table = {
         config: {
-            cacheDate: Date.now()
+            cacheDate: 0
         },
-        columns:[],
-        rows:[]
+        headers: <Array<TableHeader>>[],
+        rows: []
     }
 
     roidList = <Array<RoidData>>[];
     mineralList = <Array<MineralData>>[];
 
-    constructor(private universe:UniverseService){
+    constructor(private universe:UniverseService, private market:MarketsService){
 
     }
 
-    build():void{
+    getTable():Promise<object>{
+
+        if(this.table.config.cacheDate > Date.now()){
+            return new Promise((resolve, reject) => {
+                resolve(this.table);
+            })
+        }
 
 
         this.table.config.cacheDate = Date.now();
+
+        return Promise.all([this.getRoidList(), this.getMineralList(), this.market.listMarketPrices()]).then((results) => {
+            
+            this.table.headers = [];
+            this.table.rows = [];
+            
+
+            let marketPrices = results[2];
+            //add market prices into lists
+            marketPrices.forEach((entry) => {
+                let roid = this.roidList.find((item) => item.type_id == entry.type_id);
+                if(roid){
+                    roid.average_price = entry.average_price;
+                    roid.adjusted_price = entry.adjusted_price;
+                }
+
+                let mineral = this.mineralList.find((item) => item.type_id == entry.type_id);
+                if(mineral){
+                    mineral.average_price = entry.average_price;
+                    mineral.adjusted_price = entry.adjusted_price;
+                }
+            })
+            
+            this.table.headers.push(
+                {name:"", url:"" },
+                {name:"Price", url:"" }
+                )
+            
+            this.mineralList.forEach((mineral) =>{
+                this.table.headers.push({name:mineral.name, url:"", meta:mineral});
+            })
+
+            //spacer for refined/ore.. if we keep that?
+            this.table.headers.push({name:"", url:""})
+
+            this.table.headers.push({name:"Volume", url:""})
+            this.table.headers.push({name:"isk/m3", url:""})
+            this.table.headers.push({name:"isk/hour", url:""})
+
+            //put roids in our rows... padding columns where needed. 
+
+            this.roidList.forEach((roid) =>{
+                //build row
+                let row = [roid, roid.average_price + 'isk']
+
+                this.mineralList.forEach((mineral) => {
+                    if(mineral.average_price){
+                        row.push(mineral.average_price + 'isk')
+                    } else {
+                        row.push('0');
+                    }
+                })
+
+                //padd remaining with placeholders..
+                row.push('refined/ore')
+                row.push('0')
+                row.push('0')
+                row.push('0')
+
+                this.table.rows.push(row);
+            })
+
+            this.table.config.cacheDate = Date.now() + (1000 * 60 * 60 * 24);
+
+            return this.table;
+        })
+
     }
 
 
@@ -71,12 +145,19 @@ export class OreTableService {
         })    }
 }
 
+declare interface TableHeader {
+    name:string;
+    url:string;
+    meta?:object;
+}
 
 export interface RoidData {
     type_id:number;
     name:string;
     description:string;
     volume:number;
+    average_price?:number;
+    adjusted_price?:number;
 }
 
 export interface MineralData {
@@ -84,4 +165,6 @@ export interface MineralData {
     name:string;
     description:string;
     volume:number;
+    average_price?:number;
+    adjusted_price?:number;
 }
