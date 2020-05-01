@@ -15,7 +15,8 @@ export class OreTableController {
     }
 
     @Get('/testing')
-    testing():Promise<Array<RoidData>>{
-        return this.oreTable.getMineralList();
+    testing():Object{
+        return {};
+        //return this.oreTable.getMineralList();
     }
 }
