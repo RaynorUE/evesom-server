@@ -78,7 +78,7 @@ export class OreTableService {
                 this.mineralList.forEach((mineral) => {
                     let roidMineral = roid.minerals.find((min) => mineral.type_id == min.type_id);
                     if (mineral.average_price && roidMineral && roidMineral.type_id) {
-                        row.push((mineral.average_price * roidMineral.quantity) + 'isk')
+                        row.push((mineral.average_price * roidMineral.quantity).toFixed(2) + 'isk')
                     } else {
                         row.push('0');
                     }
